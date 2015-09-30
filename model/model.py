@@ -1,16 +1,15 @@
 class Model(object):
-    """ """
+    """ A representaion of a basic 2d object in terms of sequential edges """
 
-    def __init__(self, edges, vertices):
+    def __init__(self, edges):
         self.edges = edges
-        self.vertices = vertices
-        self.validate()
 
-    def validate(self):
-        pass
+    def __repr__(self):
+        return "E:%s" % str(self.edges)
 
     def bounding_rectangle(self):
-        pass
+        ''' complicated, will do later '''
 
-    def path_length(self):
-        pass
+    def bounding_area(self, pad=0.0):
+        ''' complicated, will do later '''
+        return 1.0

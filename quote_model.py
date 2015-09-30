@@ -5,7 +5,7 @@
 import sys
 import getopt
 
-from model.load import load_model
+from model.util import *
 
 def main():
     try:
@@ -20,9 +20,10 @@ def main():
             print __doc__
             sys.exit(0)
 
-    # model = load_model(...)
+    model = load(None)
+    # validate(model) - might be overkill for this project
     # compute quote
-    # print '%.2f' % model.quote
+    print '%.2f' % quote(model)
 
 if __name__ == "__main__":
     main()
