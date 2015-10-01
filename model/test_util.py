@@ -1,9 +1,9 @@
 import pytest, json
 
 from point import *
-from edge import *
+from edge  import *
 from model import *
-from util import *
+from util  import *
 
 # parsing
 def test_parse_json():

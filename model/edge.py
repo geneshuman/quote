@@ -12,9 +12,11 @@ class Edge(object):
     def arc_length(self):
         raise NotImplementedError("subclass responsibly")
 
+    def theta_bound(self):
+        raise NotImplementedError("subclass responsibly")
+
     def __ne__(self, other):
         return not self.__eq__(other)
-
 
 class LinearEdge(Edge):
     """ A representation of a two dimensional linear line segment """
@@ -27,6 +29,17 @@ class LinearEdge(Edge):
     def arc_length(self):
         return math.sqrt((self.vertices[0].x - self.vertices[1].x) ** 2 +
                          (self.vertices[0].y - self.vertices[1].y) ** 2)
+
+    def theta_bound(self, th):
+        ''' returns [distance to closest point, distance to farthest point]
+        wrt line going through the origin that makes angle(th) wrt the x-axis
+        values are positive for points counter clockwise from the line
+        '''
+        a = -1.0 * math.sin(th)
+        b = math.cos(th)
+        d = [a * v.x + b * v.y for v in self.vertices]
+        d.sort()
+        return d
 
     def __repr__(self):
         return "LinearEdge:%s" % str(self.vertices)
