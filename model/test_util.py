@@ -1,10 +1,24 @@
-import pytest
+import pytest, json
 
 from point import *
 from edge import *
 from model import *
 from util import *
 
+# parsing
+def test_parse_json():
+    with open('data/rectangle.json') as data_file:
+        data = json.load(data_file)
+
+    model = parse_json(data)
+
+    with open('data/cut_circular_arc.json') as data_file:
+        data = json.load(data_file)
+
+    model = parse_json(data)
+
+
+# quoting
 def test_cut_speed():
     edge = LinearEdge([Point(33,0), Point(-27,1)])
     assert cut_speed(edge) == 1.0
