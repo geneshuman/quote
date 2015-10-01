@@ -18,4 +18,4 @@ class Model(object):
         rect = self.bounding_rectangle()
         w = LinearEdge([rect[0], rect[1]]).arc_length()
         h = LinearEdge([rect[1], rect[2]]).arc_length()
-        return (w + 2.0 * pad) * (h + 2.0 * pad)
+        return (w + pad) * (h + pad)
