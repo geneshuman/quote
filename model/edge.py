@@ -1,4 +1,5 @@
 import math
+from sets import Set
 
 class Edge(object):
     """ A generic representation of a two dimensional line segment of variable type """
@@ -11,8 +12,8 @@ class Edge(object):
     def arc_length(self):
         raise NotImplementedError("subclass responsibly")
 
-    def __repr__(self):
-        return "V:%s" % str(self.vertices)
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class LinearEdge(Edge):
@@ -27,6 +28,16 @@ class LinearEdge(Edge):
         return math.sqrt((self.vertices[0].x - self.vertices[1].x) ** 2 +
                          (self.vertices[0].y - self.vertices[1].y) ** 2)
 
+    def __repr__(self):
+        return "LinearEdge:%s" % str(self.vertices)
+
+
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__)
+            and Set(self.vertices) == Set(other.vertices))
+
+    def __hash__(self):
+        return hash(frozenset(self.vertices))
 
 class CircularEdge(Edge):
     """ A representation of a two dimensional circular arc
@@ -69,3 +80,15 @@ class CircularEdge(Edge):
 
             print dp, th
             return r * th
+
+
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__)
+            and self.vertices == other.vertices
+            and self.center == other.center)
+
+    def __repr__(self):
+        return "CircularEdge:%s r:%s" % (str(self.vertices), str(self.center))
+
+    def __hash__(self):
+        return hash(frozenset(self.vertices)) + hash(self.center)

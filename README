@@ -1,6 +1,6 @@
 TODO:
 finish model.py - bounding box
-validate()
 finish testing quoting for circular & other bounding boxes
-finish testing parsing
 main()
+
+validate()

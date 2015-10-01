@@ -1,36 +1,64 @@
 from point import *
 from edge import *
+from model import *
 
 def parse_json(data):
-    """ turn a json object into a model """
+    """ turn a json object into a model.
+        raises NotImplementedError for unknown edge types
+        raises LookupError for dupliate vertex ids(dont care about edge ids as they aren't used)
+        raises KeyError if the json is malformed
+    """
+    # vertices
     all_vertices = {}
     for i, v in data["Vertices"].iteritems():
-        all_vertices[int(i)] = Point(v["Position"]["X"], v["Position"]["Y"])
+        try:
+            if all_vertices.has_key(int(i)):
+                raise LookupError("duplicate vertex id - %s" % i)
+            all_vertices[int(i)] = Point(v["Position"]["X"], v["Position"]["Y"])
+        except (LookupError, KeyError) as e:
+            raise ValueError("invalid json %s\nwith msg: %s" % (str(v), str(e)))
 
+    # edges
     edges = []
     for _, edge in data["Edges"].iteritems():
-        vertices = [all_vertices[int(v)] for v in edge["Vertices"]]
-        if edge["Type"] == "LineSegment":
-            edges.append(LinearEdge(vertices))
-        elif edge["Type"] == "CircularArc":
-            start = all_vertices[edge["ClockwiseFrom"]]
-            if start != vertices[0]:
-                vertices = reversed(vertices)
-            center = Point(edge["Center"]["X"], edge["Center"]["Y"])
-            edges.append(CircularEdge(vertices, center))
-        else:
-            raise NotImplementedError("invalid edge type")
+        try:
+            vertices = [all_vertices[int(v)] for v in edge["Vertices"]]
+            if edge["Type"] == "LineSegment":
+                edges.append(LinearEdge(vertices))
+            elif edge["Type"] == "CircularArc":
+                start = all_vertices[edge["ClockwiseFrom"]]
+                if start != vertices[0]:
+                    vertices = reversed(vertices)
+                center = Point(edge["Center"]["X"], edge["Center"]["Y"])
+                edges.append(CircularEdge(vertices, center))
+            else:
+                raise NotImplementedError("invalid edge type")
+        except (NotImplementedError, KeyError, ValueError) as e:
+            raise ValueError("invalid json %s\nwith msg: %s" % (str(edge), str(e)))
 
+    return Model(edges)
+
+# i'm going to skip this.  the quoting mechanism will work just fine if the clients
+# provide topologically peculiar models.  it would probably be good to let them know though.
+# but as it's somewhat irrelevant to the stated problem(and a bit complicated), i'm going to
+# skip it.
 def validate(model):
     """
-    loops are well formed
-    loops dont intersect
-    minimal distance between edges
+    topology is reasonable <- I would assume that what clients legitimately want would be
+      to cut out some number of closed curves from the stock.  maybe just make sure
+      all vertices have degree 2 and there's no intersection?
+
+    minimal distance between edges <- given the laser's non-zero thickness,
+      theres a smallest distance between edges that we can cut
+
+    maybe make sure edges dont everlap except at single points for efficiency?
+
     """
     pass
 
 
 def cut_speed(edge):
+    ''' the relative rate at which the machine can cut the edge (in/s) '''
     if(type(edge) == LinearEdge):
         return 1.0
     elif(type(edge) == CircularEdge):

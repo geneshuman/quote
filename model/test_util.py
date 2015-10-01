@@ -9,14 +9,27 @@ from util import *
 def test_parse_json():
     with open('data/rectangle.json') as data_file:
         data = json.load(data_file)
+    loaded = parse_json(data)
 
-    model = parse_json(data)
+    vertices = [Point(0,0), Point(0,3), Point(5,3), Point(5,0)]
+    edges = [LinearEdge([vertices[0], vertices[1]]), LinearEdge([vertices[1], vertices[2]]),
+             LinearEdge([vertices[2], vertices[3]]), LinearEdge([vertices[3], vertices[0]])]
+    model = Model(edges)
+
+    assert loaded == model
 
     with open('data/cut_circular_arc.json') as data_file:
         data = json.load(data_file)
 
-    model = parse_json(data)
+    loaded = parse_json(data)
 
+    vertices = [Point(0,0), Point(2,0), Point(2,1), Point(0,1)]
+    edges = [LinearEdge([vertices[0], vertices[1]]),
+             CircularEdge([vertices[1], vertices[2]], Point(2.0, 0.5)),
+             LinearEdge([vertices[2], vertices[3]]), LinearEdge([vertices[3], vertices[0]])]
+    model = Model(edges)
+
+    assert loaded == model
 
 # quoting
 def test_cut_speed():

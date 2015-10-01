@@ -1,3 +1,4 @@
+from sets import Set
 import pytest, math
 
 from point import *
@@ -50,3 +51,15 @@ def test_circular_edge_length():
 
     edge = CircularEdge([Point(0,2), Point(0.1,-0.9)], Point(0,0))
     assert edge.arc_length() > 2.0 * math.pi
+
+
+def test_equality():
+    e0 = LinearEdge([Point(0,0), Point(0,1)])
+    e1 = LinearEdge([Point(0,0), Point(0,1)])
+
+    assert e0 == e1
+
+    e0 = LinearEdge([Point(0,0), Point(0,1)])
+    e1 = LinearEdge([Point(0,1), Point(0,0)])
+
+    assert e0 == e1
