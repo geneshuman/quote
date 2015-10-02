@@ -36,4 +36,6 @@ results make sense/they have any thoughts on edge cases that might be missed
 - I'm sure there are pre packaged geometry backends.  Long term its almost certainly correct to be
 using one
 
+- This isn't quite set up to work as a library or anything.  Putting it in a proper package might be useful.
+
 - There might be some failure models of the json parsing I missed
