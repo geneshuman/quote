@@ -39,7 +39,7 @@ def test_cut_speed():
     edge = CircularEdge([Point(0,0)], Point(3, 0))
     assert abs(cut_speed(edge) - 0.71653131057) < 0.000001
 
-    edge = CircularEdge([Point(0,0), Point(1,0)], Point(3, 0))
+    edge = CircularEdge([Point(0,0), Point(6,0)], Point(3, 0))
     assert abs(cut_speed(edge) - 0.71653131057) < 0.000001
 
 def test_quote():
@@ -53,6 +53,17 @@ def test_quote():
     model = Model(edges)
     assert abs(quote(model) - 14.0975) < 0.00000001
 
-    # come back to this
-    # model = Model([CircularEdge([Point(1,0)], Point(0,0))])
-    # assert abs(quote(model) - 14.0975) < 0.00000001
+    with open('data/rectangle.json') as data_file:
+        data = json.load(data_file)
+    model = parse_json(data)
+    assert abs(quote(model) - 14.0975) < 0.001
+
+    with open('data/extrude_circular_arc.json') as data_file:
+        data = json.load(data_file)
+    model = parse_json(data)
+    assert abs(quote(model) - 4.469938305015438) < 0.001
+
+    with open('data/cut_circular_arc.json') as data_file:
+        data = json.load(data_file)
+    model = parse_json(data)
+    assert abs(quote(model) - 4.057438305015438) < 0.001

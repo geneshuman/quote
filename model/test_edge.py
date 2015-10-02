@@ -48,23 +48,24 @@ def test_circular_edge_length():
     edge = CircularEdge([Point(1,0), Point(-1,0)], Point(0,0))
     assert abs(edge.arc_length() - 2.0 * math.pi * 2 / 4 ) < 0.0000001
 
-    edge = CircularEdge([Point(1,0), Point(-0.9,0.1)], Point(0,0))
+    edge = CircularEdge([Point(1,0), Point(math.cos(3),math.sin(3))], Point(0,0))
     assert edge.arc_length() < math.pi
 
-    edge = CircularEdge([Point(1,0), Point(-0.9,-0.1)], Point(0,0))
+    edge = CircularEdge([Point(1,0), Point(math.cos(3.2),math.sin(3.2))], Point(0,0))
     assert edge.arc_length() > math.pi
 
     edge = CircularEdge([Point(0,2), Point(0,-2)], Point(0,0))
     assert abs(edge.arc_length() - 2.0 * 2.0 * math.pi * 2 / 4 ) < 0.0000001
 
-    edge = CircularEdge([Point(0,2), Point(-0.1,-0.9)], Point(0,0))
-    assert edge.arc_length() < 2.0 * math.pi
+    edge = CircularEdge([Point(0,2), Point(2*math.cos(3),2*math.sin(3))], Point(0,0))
+    assert edge.arc_length() < math.pi
 
-    edge = CircularEdge([Point(0,2), Point(0.1,-0.9)], Point(0,0))
-    assert edge.arc_length() > 2.0 * math.pi
+    edge = CircularEdge([Point(0,2), Point(2*math.cos(3.2), 2*math.sin(3.2))], Point(0,0))
+    assert edge.arc_length() > math.pi
 
 def test_angular_distance():
     np.testing.assert_almost_equal(angular_distance(math.pi, 0), math.pi)
+    np.testing.assert_almost_equal(angular_distance(0, -1 * math.pi), math.pi)
     np.testing.assert_almost_equal(angular_distance(math.pi, 2 * math.pi), math.pi)
     np.testing.assert_almost_equal(angular_distance(math.pi / 2, 2 * math.pi), math.pi / 2)
     np.testing.assert_almost_equal(angular_distance(math.pi / 2, -1 * math.pi / 2), math.pi)
@@ -119,6 +120,16 @@ def test_circular_theta_bounds():
     edge = CircularEdge([Point(-1,1), Point(1, -1)], Point(0,0))
     np.testing.assert_almost_equal(edge.theta_bound(0), [-1, math.sqrt(2)])
     np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-1.0*math.sqrt(2), 1])
+
+    edge = CircularEdge([Point(2,1), Point(2,0)], Point(2, 0.5))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [0, 1])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-2.5, -2])
+
+    edge = CircularEdge([Point(2,8), Point(2,7)], Point(2, 7.5))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [7, 8])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-2.5, -2])
+
+
 
 
 def test_equality():

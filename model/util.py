@@ -4,10 +4,12 @@ from model import *
 
 def parse_json(data):
     """ turn a json object into a model.
-        raises NotImplementedError for unknown edge types
-        raises LookupError for dupliate vertex ids(dont care about edge ids as they aren't used)
-        raises KeyError if the json is malformed
     """
+    if not data.has_key("Vertices"):
+        raise ValueError("invalid json - expected 'Vertices' key")
+    if not data.has_key("Edges"):
+        raise ValueError("invalid json - expected 'Edges' key")
+
     # vertices
     all_vertices = {}
     for i, v in data["Vertices"].iteritems():
@@ -28,7 +30,7 @@ def parse_json(data):
             elif edge["Type"] == "CircularArc":
                 start = all_vertices[edge["ClockwiseFrom"]]
                 if start != vertices[0]:
-                    vertices = reversed(vertices)
+                    vertices = vertices[::-1]
                 center = Point(edge["Center"]["X"], edge["Center"]["Y"])
                 edges.append(CircularEdge(vertices, center))
             else:
@@ -68,12 +70,12 @@ def cut_speed(edge):
 
 
 def quote(model, pad=0.1, mat_cost=0.75, mac_cost=0.07, v_max=0.5):
-    """ """
+    """ computes the machining cost of a model as a function of the minimal bounding box
+    and path length
+    """
 
     area       = model.bounding_area(pad)
     speeds     = [v_max * cut_speed(edge) for edge in model.edges]
     total_time = sum([elt[1].arc_length() / elt[0] for elt in zip(speeds, model.edges)])
-
-    # print area, speeds, total_time
 
     return area * mat_cost + total_time * mac_cost

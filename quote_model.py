@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 """quote
+   a utility for producing quotes for laser cutting 2d shapes
+
+   usage - ./quote_model [file]
 """
-import sys
-import getopt
+import sys, getopt, json
 
 from model.util import *
 
@@ -20,10 +22,36 @@ def main():
             print __doc__
             sys.exit(0)
 
-    model = load(None)
+    if len(sys.argv) != 2:
+        print __doc__
+        sys.exit(0)
+
+    filename = sys.argv[1]
+    try:
+        f = open(filename)
+    except IOError:
+        print "File or path not found - %s" % filename
+        sys.exit(0)
+
+    try:
+        data = json.load(f)
+    except ValueError:
+        print "Decoding JSON has failed"
+        f.close()
+        sys.exit(0)
+
+    try:
+        model = parse_json(data)
+    except ValueError as e:
+        print str(e)
+        f.close()
+        sys.exit(0)
+
+    f.close()
+
     # validate(model) - might be overkill for this project
-    # compute quote
-    print '%.2f' % quote(model)
+
+    print '%.2f dollars' % quote(model)
 
 if __name__ == "__main__":
     main()

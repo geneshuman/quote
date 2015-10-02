@@ -35,7 +35,7 @@ class Model(object):
     # seems tricky.  Probably a decent optimization though.
     def bounding_area(self, pad=0.0):
         '''  '''
-        N = 50 # just a guess
+        N = 100 # just a guess
         min_data = None # (th, a, w, h)
 
         for n in xrange(N + 1):
@@ -44,26 +44,22 @@ class Model(object):
             w_min = w_max = h_min = h_max = None
             for edge in self.edges:
                 b_min, b_max = edge.theta_bound(th)
-                print "maxs th", edge, b_min, b_max
-                if not w_min or b_min < w_min:
+                if w_min == None or b_min < w_min:
                     w_min = b_min
-                if not w_max or b_max > w_max:
+                if w_max == None or b_max > w_max:
                     w_max = b_max
 
                 b_min, b_max = edge.theta_bound(th + math.pi / 2.0)
-                print "maxs th'", edge, b_min, b_max
-                if not h_min or b_min < h_min:
+                if h_min == None or b_min < h_min:
                     h_min = b_min
-                if not h_max or b_max > h_max:
+                if h_max == None or b_max > h_max:
                     h_max = b_max
 
             w = w_max - w_min
             h = h_max - h_min
             area = w * h
 
-        #    print th, w,h,area
-            if not min_data or area < min_data[1]:
+            if min_data == None or area < min_data[1]:
                 min_data = (th, area, w, h)
 
-        #print min_data
         return (min_data[2] + pad) * (min_data[3] + pad)

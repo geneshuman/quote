@@ -76,13 +76,13 @@ class CircularEdge(Edge):
         self.center = center
         super(CircularEdge, self).__init__(vertices)
 
-        if(self.r == 0):
-            raise ValueError('circular edges must have non zero radius')
-
         # make sure vertices are same distance from center
-        if(len(vertices) == 2 and self.r() !=
-           LinearEdge([self.vertices[0], self.center]).arc_length()):
+        if(len(vertices) == 2 and abs(LinearEdge([self.vertices[1], self.center]).arc_length() -
+                                      LinearEdge([self.vertices[0], self.center]).arc_length()) > 0.00000001):
             raise ValueError('vertices must be same distance from center')
+
+        if(self.r() == 0):
+            raise ValueError('circular edges must have non zero radius')
 
 
     # could memoize this if our object was immutable & it mattered
@@ -99,6 +99,7 @@ class CircularEdge(Edge):
             dp = v0[0] * v1[0] + v0[1] * v1[1]
             th = math.acos(dp / (r ** 2))
 
+            # dot product gives us multiple possible th values, find right one
             if(v1[1] * v0[0] <= v0[1] * v1[0]):
                 th = 2 * math.pi - th
 
@@ -126,18 +127,17 @@ class CircularEdge(Edge):
         v_dist.sort()
 
         # if poles of circle(wrt th-line) are in the arc, add to list
-        th0 = math.atan2(self.vertices[0].y, self.vertices[0].x)
-        th1 = math.atan2(self.vertices[1].y, self.vertices[1].x)
+        th0 = math.atan2(self.vertices[0].y - self.center.y, self.vertices[0].x - self.center.x)
+        th1 = math.atan2(self.vertices[1].y - self.center.y, self.vertices[1].x - self.center.x)
 
-        if angular_distance(th0, th + math.pi / 2) < angular_distance(th0, th1):
+        if angular_distance(th0, th + math.pi / 2) <= angular_distance(th0, th1):
             v_dist.append(circle_d[1])
 
-        if angular_distance(th0, th + 3 * math.pi / 2) < angular_distance(th0, th1):
+        if angular_distance(th0, th + 3 * math.pi / 2) <= angular_distance(th0, th1):
             v_dist.append(circle_d[0])
 
         v_dist.sort()
 
-        print th0, th1, v_dist
         return [v_dist[0], v_dist[-1]]
 
     def __eq__(self, other):
