@@ -35,7 +35,7 @@ class Model(object):
     # seems tricky.  Probably a decent optimization though.
     def bounding_area(self, pad=0.0):
         '''  '''
-        N = 500 # just a guess
+        N = 50 # just a guess
         min_data = None # (th, a, w, h)
 
         for n in xrange(N + 1):
@@ -61,9 +61,9 @@ class Model(object):
             h = h_max - h_min
             area = w * h
 
-            print th, w,h,area
+        #    print th, w,h,area
             if not min_data or area < min_data[1]:
                 min_data = (th, area, w, h)
 
-        print min_data
+        #print min_data
         return (min_data[2] + pad) * (min_data[3] + pad)

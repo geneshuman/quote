@@ -1,5 +1,6 @@
 from sets import Set
 import pytest, math
+import numpy as np
 
 from point import *
 from edge  import *
@@ -61,6 +62,63 @@ def test_circular_edge_length():
 
     edge = CircularEdge([Point(0,2), Point(0.1,-0.9)], Point(0,0))
     assert edge.arc_length() > 2.0 * math.pi
+
+def test_angular_distance():
+    np.testing.assert_almost_equal(angular_distance(math.pi, 0), math.pi)
+    np.testing.assert_almost_equal(angular_distance(math.pi, 2 * math.pi), math.pi)
+    np.testing.assert_almost_equal(angular_distance(math.pi / 2, 2 * math.pi), math.pi / 2)
+    np.testing.assert_almost_equal(angular_distance(math.pi / 2, -1 * math.pi / 2), math.pi)
+    np.testing.assert_almost_equal(angular_distance(0, -1 * math.pi / 2), math.pi / 2)
+    np.testing.assert_almost_equal(angular_distance(-2 * math.pi, -1 * math.pi / 2), math.pi / 2)
+
+    np.testing.assert_almost_equal(angular_distance(-2 * math.pi, math.pi / 2), 3 * math.pi / 2)
+
+def test_circular_theta_bounds():
+    edge = CircularEdge([Point(0,1)], Point(0,0))
+    assert edge.theta_bound(0) == [-1, 1]
+    assert edge.theta_bound(math.pi / 2) == [-1, 1]
+    assert edge.theta_bound(507.9 * math.pi) == [-1, 1]
+
+    edge = CircularEdge([Point(3,2)], Point(3,0))
+    assert edge.theta_bound(0) == [-2, 2]
+    assert edge.theta_bound(math.pi / 2) == [-5, -1]
+
+    edge = CircularEdge([Point(-1,0), Point(1, 0)], Point(0,0))
+    assert edge.theta_bound(0) == [0, 1]
+    assert edge.theta_bound(math.pi / 2) == [-1, 1]
+
+    edge = CircularEdge([Point(0,1)], Point(0,0))
+    assert edge.theta_bound(0) == [-1, 1]
+    assert edge.theta_bound(math.pi / 2) == [-1, 1]
+    assert edge.theta_bound(507.9 * math.pi) == [-1, 1]
+
+    edge = CircularEdge([Point(3,2)], Point(3,0))
+    assert edge.theta_bound(0) == [-2, 2]
+    assert edge.theta_bound(math.pi / 2) == [-5, -1]
+
+    edge = CircularEdge([Point(-1,0), Point(1, 0)], Point(0,0))
+    assert edge.theta_bound(0) == [0, 1]
+    assert edge.theta_bound(math.pi / 2) == [-1, 1]
+
+    edge = CircularEdge([Point(1,0), Point(-1, 0)], Point(0,0))
+    assert edge.theta_bound(0) == [-1, 0]
+    assert edge.theta_bound(math.pi / 2) == [-1, 1]
+
+    edge = CircularEdge([Point(-1,0), Point(0, 1)], Point(0,0))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [0, 1])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [0, 1])
+
+    edge = CircularEdge([Point(1,0), Point(0, 1)], Point(0,0))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [-1, 1])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-1, 1])
+
+    edge = CircularEdge([Point(0,-1), Point(0, 1)], Point(0,0))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [-1, 1])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [0, 1])
+
+    edge = CircularEdge([Point(-1,1), Point(1, -1)], Point(0,0))
+    np.testing.assert_almost_equal(edge.theta_bound(0), [-1, math.sqrt(2)])
+    np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-1.0*math.sqrt(2), 1])
 
 
 def test_equality():

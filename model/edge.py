@@ -1,5 +1,4 @@
 import math
-from sets import Set
 
 class Edge(object):
     """ A generic representation of a two dimensional line segment of variable type """
@@ -27,12 +26,12 @@ class LinearEdge(Edge):
         super(LinearEdge, self).__init__(vertices)
 
     def arc_length(self):
-        return math.sqrt((self.vertices[0].x - self.vertices[1].x) ** 2 +
-                         (self.vertices[0].y - self.vertices[1].y) ** 2)
+        return math.hypot(self.vertices[0].x - self.vertices[1].x,
+                          self.vertices[0].y - self.vertices[1].y)
 
     def theta_bound(self, th):
-        ''' returns [distance to closest point, distance to farthest point]
-        wrt line going through the origin that makes angle(th) wrt the x-axis
+        ''' finds [distance to closest point, distance to farthest point]
+        on edge wrt line going through the origin that makes angle(th) wrt the x-axis
         values are positive for points counter clockwise from the line
         '''
         a = -1.0 * math.sin(th)
@@ -47,10 +46,23 @@ class LinearEdge(Edge):
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
-            and Set(self.vertices) == Set(other.vertices))
+            and set(self.vertices) == set(other.vertices))
 
     def __hash__(self):
         return hash(frozenset(self.vertices))
+
+# utility method
+def angular_distance(th0, th1):
+    ''' given two values of theta, compute the angular distance
+    in radians, moving clockwise from th0 to th1
+    '''
+    th0 = th0 % (2 * math.pi)
+    th1 = th1 % (2 * math.pi)
+
+    if th0 < th1:
+        return th0 + (2 * math.pi - th1)
+    else:
+        return th0 - th1
 
 class CircularEdge(Edge):
     """ A representation of a two dimensional circular arc
@@ -88,12 +100,45 @@ class CircularEdge(Edge):
             th = math.acos(dp / (r ** 2))
 
             if(v1[1] * v0[0] <= v0[1] * v1[0]):
-                print 'o'
                 th = 2 * math.pi - th
 
-            print dp, th
             return r * th
 
+    def theta_bound(self, th):
+        ''' finds [distance to closest point, distance to farthest point]
+        on edge wrt line going through the origin that makes angle(th) wrt the x-axis
+        values are positive for points counter clockwise from the line
+        '''
+
+        # closest & furthest points of circle to th-line
+        a = -1.0 * math.sin(th)
+        b = math.cos(th)
+        d = a * self.center.x + b * self.center.y
+
+        circle_d = [d + self.r(), d - self.r()]
+        circle_d.sort()
+
+        if len(self.vertices) == 1:
+            return circle_d
+
+        # vertex distances
+        v_dist = [a * v.x + b * v.y for v in self.vertices]
+        v_dist.sort()
+
+        # if poles of circle(wrt th-line) are in the arc, add to list
+        th0 = math.atan2(self.vertices[0].y, self.vertices[0].x)
+        th1 = math.atan2(self.vertices[1].y, self.vertices[1].x)
+
+        if angular_distance(th0, th + math.pi / 2) < angular_distance(th0, th1):
+            v_dist.append(circle_d[1])
+
+        if angular_distance(th0, th + 3 * math.pi / 2) < angular_distance(th0, th1):
+            v_dist.append(circle_d[0])
+
+        v_dist.sort()
+
+        print th0, th1, v_dist
+        return [v_dist[0], v_dist[-1]]
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
