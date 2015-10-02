@@ -1,9 +1,9 @@
 from point import *
-from edge import *
+from edge  import *
 from model import *
 
 def parse_json(data):
-    """ turn a json object into a model.
+    """ turn a json object into a model. throws ValueError when json doesn't match needed format
     """
     if not data.has_key("Vertices"):
         raise ValueError("invalid json - expected 'Vertices' key")
@@ -51,7 +51,8 @@ def validate(model):
       all vertices have degree 2 and there's no intersection?
 
     minimal distance between edges <- given the laser's non-zero thickness,
-      theres a smallest distance between edges that we can cut
+      theres a smallest distance between edges that we can cut.  right now the padding is
+      just added to the bounding box
 
     maybe make sure edges dont everlap except at single points for efficiency?
 
@@ -71,7 +72,7 @@ def cut_speed(edge):
 
 def quote(model, pad=0.1, mat_cost=0.75, mac_cost=0.07, v_max=0.5):
     """ computes the machining cost of a model as a function of the minimal bounding box
-    and path length
+    and path length.  lengths/parameters in inches
     """
 
     area       = model.bounding_area(pad)

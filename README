@@ -1,6 +1,39 @@
+quote - a utility/library for producing quotes for laser cutting 2d shapes
+
+usage - ./quote_model [file]
+
+might not work on windows
+can run test suite by installing pytest & numpy & running py.test
+
+# NOTES
+
+I made a few design decisions that are worth thinking about.  The problem is fairly simple,
+and an object oriented solution is quite possibly overkill.  But it a pythonic one & one would
+assume this system would be generalized in the future, so objects might be smart.  Second,
+I decided to be ocd & test everything & be super defensive.  Mostly, this is just because
+this is a good thing to do, but also, I get kind of paranoid when money is involved.
+Probably want that stuff to be right & not break.  Also worth noting is the separation between
+code that is solely geometric, and code that is specific to the quoting/machining process.  It
+might be hard to maintain this kind of separation long term, but its probably a really good idea
+to keep the coupling between the two as minimal as possible.  Can do things like switch out the
+geometry engine much easier.
+
 TODO:
 
-final testing pass
-readme
+- Theres a bunch of validation that should probably happen to make sure the data makes sense
+topologically.  This is super important.  Theres a fundamental resolution we can cut & that's
+not taken into account really, except in pricing stock size.  There are some other things that maybe
+should be checked too.  see code
 
-validate()
+- I discovered the numpy float comparison assertion towards the end of this.  Should probably change
+all of those manual comparissons to this format.
+
+- Probaly smart to check the results with somebody who knows about these things to see if the
+results make sense/they have any thoughts on edge cases that might be missed
+
+- The bounding box algorithm is pretty dumb.  Unclear if its worth it to make it better
+
+- I'm sure there are pre packaged geometry backends.  Long term its almost certainly correct to be
+using one
+
+- There might be some failure models of the json parsing I missed

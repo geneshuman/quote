@@ -21,9 +21,9 @@ class Model(object):
 
     # Ok this is a bit curious.  I'm assuming we need to figure out optimal orientation, which
     # as far as I can tell is a bit tricky.  The solution I've implemented is an approximation,
-    # and fairly dumb, although is fairly and should be practically effective up to a point.
+    # and fairly dumb, although is fairly simple and should be practically effective up to a point.
     # The basic question is what is the minimum value w * h of bounding_box(th), as
-    # 0 <= th <= pi / 2, where the box is oriented at angle th wrt the x axis.  There is
+    # 0 <= th <= pi / 2, where a box is oriented at angle th wrt the x axis.  There is
     # certainly a mathematically correct answer, but I can't find any particuarly elegant or
     # efficent(codewise) ways of doing this.  This is certainly a solved problem so the
     # ultimately correct solution would involve researching the problem and either implementing or
@@ -32,7 +32,8 @@ class Model(object):
     # each value of th.  I bet this is practically good enough.  It's linear in the number of
     # edges, although the constant might be big.  Probably doesn't matter.  Can be made arbitrarily
     # precise.  I'm sure you could be smart & dynamicaly choose your values of th to test, but this
-    # seems tricky.  Probably a decent optimization though.
+    # seems tricky.  Probably a decent optimization though.  But unless you're machining a zillion
+    # pieces, this should be fine.
     def bounding_area(self, pad=0.0):
         '''  '''
         N = 100 # just a guess

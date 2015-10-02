@@ -10,6 +10,7 @@ import sys, getopt, json
 from model.util import *
 
 def main():
+    # validate args
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
     except getopt.error, msg:
@@ -26,6 +27,7 @@ def main():
         print __doc__
         sys.exit(0)
 
+    # quote model
     filename = sys.argv[1]
     try:
         f = open(filename)
@@ -52,6 +54,7 @@ def main():
     # validate(model) - might be overkill for this project
 
     print '%.2f dollars' % quote(model)
+
 
 if __name__ == "__main__":
     main()

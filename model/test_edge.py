@@ -130,15 +130,11 @@ def test_circular_theta_bounds():
     np.testing.assert_almost_equal(edge.theta_bound(math.pi / 2), [-2.5, -2])
 
 
-
-
 def test_equality():
     e0 = LinearEdge([Point(0,0), Point(0,1)])
     e1 = LinearEdge([Point(0,0), Point(0,1)])
-
     assert e0 == e1
 
     e0 = LinearEdge([Point(0,0), Point(0,1)])
     e1 = LinearEdge([Point(0,1), Point(0,0)])
-
     assert e0 == e1

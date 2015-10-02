@@ -54,7 +54,7 @@ class LinearEdge(Edge):
 # utility method
 def angular_distance(th0, th1):
     ''' given two values of theta, compute the angular distance
-    in radians, moving clockwise from th0 to th1
+    0 < d < 2pi from th0 -> th1 moving clockwise from th0 to th1
     '''
     th0 = th0 % (2 * math.pi)
     th1 = th1 % (2 * math.pi)
@@ -78,17 +78,18 @@ class CircularEdge(Edge):
 
         # make sure vertices are same distance from center
         if(len(vertices) == 2 and abs(LinearEdge([self.vertices[1], self.center]).arc_length() -
-                                      LinearEdge([self.vertices[0], self.center]).arc_length()) > 0.00000001):
+                                      LinearEdge([self.vertices[0], self.center]).arc_length()) > 0.00000001): # should probably codify the acceptable floating point error somewhere
             raise ValueError('vertices must be same distance from center')
 
         if(self.r() == 0):
             raise ValueError('circular edges must have non zero radius')
 
 
-    # could memoize this if our object was immutable & it mattered
+    # could memoize this & some other stuff if our object was immutable & it mattered
     def r(self):
         return LinearEdge([self.vertices[0], self.center]).arc_length()
 
+    # could probably refactor to use angular_distance() here
     def arc_length(self):
         r = self.r()
         if(len(self.vertices) == 1):
